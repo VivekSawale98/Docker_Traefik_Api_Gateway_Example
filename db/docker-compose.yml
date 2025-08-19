@@ -1,0 +1,22 @@
+version: "3.8"
+volumes:
+  postgresvolbidi:
+networks:
+  docker_traefik_api_gateway_example_internal:
+    external: true
+services:
+  postgresdbvolforbidi:
+    image: postgres:latest
+    volumes:
+      - postgresvolbidi:/var/lib/postgresql/data
+    networks:
+      - docker_traefik_api_gateway_example_internal
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pwd
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.postgresdbvolforbidi.rule=PathPrefix(`/`)"
+    #   - "traefik.http.routers.postgresdbvolforbidi.entrypoints=accesspointdb"
+    #   - "traefik.http.services.postgresdbvolforbidi.loadbalancer.server.port=5432"
+    restart: always

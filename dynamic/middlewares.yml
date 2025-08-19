@@ -1,0 +1,27 @@
+http:
+  middlewares:
+    rate-limit-5:
+      rateLimit:
+        average: 6
+        burst: 10
+        period: 60s
+
+    auth-dashboard:
+      basicAuth:
+        users:
+          - "admin:$apr1$Zqzo/CT7$wU4R/FGr5kNYf1ZuEoGSU/"
+
+    strip-mytestapi:
+      stripPrefix:
+        prefixes:
+          - /mytestapi/test
+
+    strip-mydashboardapi:
+      stripPrefix:
+        prefixes:
+          - /mydashboard
+
+    strip-mydbaccess:
+      stripPrefix:
+        prefixes:
+          - /db/bidi

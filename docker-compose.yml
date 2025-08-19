@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+  traefik:
+    image: traefik:v3.1
+    command:
+      - "--configFile=/etc/traefik/traefik.yml"
+    ports:
+      - "9600:9600"
+      - "9601:9601"
+      - "9602:9602"
+      - "9603:9603"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./dynamic:/etc/traefik/dynamic
+    networks:
+      - internal
+    restart: always
+
+  httpbin:
+    image: kennethreitz/httpbin
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.httpbin.rule=PathPrefix(`/mytestapi/test`)"
+      - "traefik.http.routers.httpbin.entrypoints=accesspoint"
+      - "traefik.http.services.httpbin.loadbalancer.server.port=80"
+      - "traefik.http.routers.httpbin.middlewares=rate-limit-5@file,strip-mytestapi@file"
+    networks:
+      - internal
+    restart: always
+
+  dashboard-secure:
+    image: nginx:alpine
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=(PathPrefix(`/api`) || PathPrefix(`/mydashboard`))"
+      - "traefik.http.routers.dashboard.entrypoints=accesspointdashboard"
+      - "traefik.http.routers.dashboard.middlewares=auth-dashboard@file,strip-mydashboardapi@file"
+      - "traefik.http.routers.dashboard.service=api@internal"
+    networks:
+      - internal
+    restart: always
+
+networks:
+  internal:
+    driver: bridge

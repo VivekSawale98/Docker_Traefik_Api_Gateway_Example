@@ -1,0 +1,13 @@
+tcp:
+  routers:
+    postgres-router:
+      entryPoints:
+        - accesspointdb
+      rule: HostSNI(`*`)
+      service: postgres-service
+
+  services:
+    postgres-service:
+      loadBalancer:
+        servers:
+          - address: "postgresdbvolforbidi:5432"
