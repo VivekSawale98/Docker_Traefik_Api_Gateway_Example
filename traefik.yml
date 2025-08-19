@@ -18,7 +18,6 @@ providers:
   file:
     directory: /etc/traefik/dynamic
     watch: true
-    filename: middlewares.yml
 
 metrics:
   prometheus:
